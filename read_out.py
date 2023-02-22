@@ -81,7 +81,7 @@ if __name__ == "__main__":
     """
     
 
-    folder = "C:/Users/gabri/Documents/GitHub/APD_scanning/Data/22-11-21-AP-4-17_and_AP-4-24try_MultipleSingleDot_Measurement-MeasurementFailMidleNight/AP-4-17/"
+    folder = ["C:/Users/gabri/Documents/GitHub/APD_scanning/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/"]
     #folder = "T:/Gabriel/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/"
 
     
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     """
     # All files for BSc JSANTEN
     
-    list_folders = ["C:/Users/gabri/Documents/GitHub/APD_scanning/Data/22-11-21-AP-4-17_and_AP-4-24try_MultipleSingleDot_Measurement-MeasurementFailMidleNight/AP-4-17/"]
+    list_folders = ["C:/Users/gabri/Documents/GitHub/APD_scanning/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/"]
     
     # list_folders = ["T:/Gabriel/Data/22-11-08_AP-3-108_MultipleDots_2Batches/",
     #                 "T:/Gabriel/Data/22-11-10-AP-3-120_MultipleSingleDot_Measurement/",
