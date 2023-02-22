@@ -715,8 +715,17 @@ if __name__ == "__main__":
     Import = SourceFiles()
 
     Import.add_entry(
-        folder="example_data/andor_export/",
-        min_energy=2.19, max_energy=2.44, bg_threshold=900)
+        folder="C:/Gabriel_OMEL/Data_analysis/MSNCs/SingleParticleSpectroscopy/Analysis_After_Julian_Project/AP_3_108/22-11-08_AP-3-108_MultipleDots_2Batches/andor_export/",
+        min_energy=2.23, max_energy=2.44, bg_threshold=1200)
+    Import.add_entry(
+        folder="C:/Gabriel_OMEL/Data_analysis/MSNCs/SingleParticleSpectroscopy/Analysis_After_Julian_Project/AP_3_108/22-11-11-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
+        min_energy=2.23, max_energy=2.46, bg_threshold=1000)
+    Import.add_entry(
+        folder="C:/Gabriel_OMEL/Data_analysis/MSNCs/SingleParticleSpectroscopy/Analysis_After_Julian_Project/AP_3_108/22-11-18-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
+        min_energy=2.23, max_energy=2.44, bg_threshold=1000)
+    Import.add_entry(
+        folder="C:/Gabriel_OMEL/Data_analysis/MSNCs/SingleParticleSpectroscopy/Analysis_After_Julian_Project/AP_3_108/22-11-23-AP_3_108/andor_export/",
+        min_energy=2.17, max_energy=2.44, bg_threshold=1000)
 
     # Files to be analyzed
     print("Import.imports_to_be_analyzed): ", Import.imports_to_be_analyzed)
