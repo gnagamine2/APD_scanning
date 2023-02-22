@@ -1,11 +1,7 @@
 .DS_Store
-.idea
-__pycache__/
-Data/
-png/**/*.png
-!png/CodeFlow_v1_drawio_withNames.png
-pdf/**/*.pdf
-logfile.txt
 .ipynb_checkpoints
-/eia_api_key.txt
-/raw.githubusercontent.com
+png/**/*.png
+.idea
+example_data/analysis/comparison/*
+
+example_data/analysis/fit/
