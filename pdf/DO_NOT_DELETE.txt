@@ -1,1 +1,0 @@
-Don't delte, s.t. a folder is synced to git

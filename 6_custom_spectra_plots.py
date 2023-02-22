@@ -422,42 +422,14 @@ def create_folder(folderpath: str):
 
 
 if __name__ == "__main__":
-    """
-    Some of the add_entry options include:
 
-    - "group_number": The group number is used to indicate which measurement days belong together; the spectra will be grouped by this 
-        number. The numbers need to be positive integers starting at 1 in a connected intervall:
-            Right: 1 2 3 4 ...
-            Wrong: 0 1 2 3 ...
-            Wrong: 1 3 4 5 ...
-    - "group_name": String containing a user-chosen name for the specific group
-    - "state": filter by state
-        - state is in ["singular", "non_singular", "discarded"] these are based on g2 if available    
-        - state is in [True, False] (careful: boolean values!) these are based on the calculations in Fitting_SingleDots
-            and are therefore based on the threshold for chi-squared in that script (most likely: 1)
-    - "threshold_chisqr" : filter by chi-squared value: this implements (almost) excactly the same filtering as in the Fitting_SingleDots 
-            scripts and can therefore be used to quickly test different thresholds! Values need to be larger than 1
-            with sensible values in the range 0.1 ... 1.0.
-    - "selected_blobs" select specfic spectra: here an array can be entered with the Andor File numbers of spectra one 
-        wants to visualize
-        
-        
-    Plotting Options (these might not always work 100% correctly). These options are mainly for the spectra plots
-    - "color": specifiy any color. The shorthand notation for the colors  ("c", "m", "y", "k", "r", "g", "b") is mapped
-        to match the specified seaborn color palette. It is also possible to provide a hex value. Refer to the official
-        documentation
-    - "linestyle": different markers can be selected ("o", "s", "<", ".")
-    
-    ATTENTION: Currently only the lorentzian fit data is used! #TODO
-    """
-
-    save_folder_path_global = create_folder("T:/Gabriel/Data/23-01-26_AP_3_120_MultipleSingleDot/andor_export/comparison/")
+    save_folder_path_global = create_folder("example_data/analysis/comparison/")
     _ = create_folder(save_folder_path_global + "csv/")
 
     Import = csvFiles()
 
     Import.add_entry(
-        folder="T:/Gabriel/Data/23-01-26_AP_3_120_MultipleSingleDot/andor_export/",
+        folder="example_data/andor_export/",
         group_number=1, group_name="AP-3-120", color="b", threshold_chisqr=1, upper_limit_fwhm=0.1)
 
     Import.create_boxplot()

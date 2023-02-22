@@ -9,3 +9,8 @@ logfile.txt
 .ipynb_checkpoints
 /eia_api_key.txt
 /raw.githubusercontent.com
+.ipynb_checkpoints
+png/**/*.png
+.idea
+example_data/analysis/comparison/*
+example_data/analysis/fit/

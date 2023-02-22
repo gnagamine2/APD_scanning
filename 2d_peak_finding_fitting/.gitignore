@@ -1,7 +1,0 @@
-.DS_Store
-.ipynb_checkpoints
-png/**/*.png
-.idea
-example_data/analysis/comparison/*
-
-example_data/analysis/fit/

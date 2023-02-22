@@ -177,14 +177,17 @@ Plots for BSc Thesis
 ########################################################################################################################
 
 ############ P00 *** Singular/Non-Singular AP-3-120
-Import.add_entry(folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-                     group_number=1, group_name="AP-3-120 singular", state="singular", color="b")
+Import.add_entry(
+    folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
+    group_number=1, group_name=r"$g^{(2)}(\tau = 0) < 0.5$", state="singular", color="b")
 
-Import.add_entry(folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-                 group_number=2, group_name="AP-3-120 non-singular", state="non_singular", color="r")
+Import.add_entry(
+    folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
+    group_number=2, group_name=r"$g^{(2)}(\tau = 0) > 0.5$", state="non_singular", color="r")
 
-Import.add_entry(folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-                     group_number=3, group_name="AP-3-120 discarded", state="discarded", color="k")
+Import.add_entry(
+    folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
+    group_number=3, group_name="discarded", state="discarded", color="k")
 
 
 ############ P01 *** AP-3-120-True_vs_False
@@ -233,39 +236,39 @@ Import.add_entry(
 
 ############ P03 *** AP-3-120 Chi vs Singular
 
-        Import.add_entry(
+   Import.add_entry(
         folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-        group_number=1, group_name="AP-3-120 singular", state="singular", linestyle="ro")
+        group_number=1, group_name= r"singular", state="singular", linestyle="ro")
 
     Import.add_entry(
         folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-        group_number=2, group_name="AP-3-120 $\chi^2 < 0.10$", threshold_chisqr=0.1, color="#08247E", linestyle="o")
+        group_number=2, group_name="$\chi^2 < 0.10$", threshold_chisqr=0.1, color="#08247E", linestyle="o")
 
     Import.add_entry(
         folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-        group_number=3, group_name="AP-3-120 $\chi^2 < 0.12$", threshold_chisqr=0.12, color="#0C36BC", linestyle="o")
+        group_number=3, group_name="$\chi^2 < 0.12$", threshold_chisqr=0.12, color="#0C36BC", linestyle="*")
 
     Import.add_entry(
         folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-        group_number=4, group_name="AP-3-120 $\chi^2 < 0.14$", threshold_chisqr=0.14, color="#1048FB", linestyle="*")
+        group_number=4, group_name="$\chi^2 < 0.14$", threshold_chisqr=0.14, color="#1048FB", linestyle="*")
 
     Import.add_entry(
         folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-        group_number=5, group_name="AP-3-120 $\chi^2 < 0.18$", threshold_chisqr=0.18, color="#406DFC", linestyle="o")
+        group_number=5, group_name="$\chi^2 < 0.18$", threshold_chisqr=0.18, color="#406DFC", linestyle="o")
 
     Import.add_entry(
         folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-        group_number=6, group_name="AP-3-120 $\chi^2 < 0.30$", threshold_chisqr=0.3, color="#7091FD", linestyle="o")
+        group_number=6, group_name="$\chi^2 < 0.30$", threshold_chisqr=0.3, color="#7091FD", linestyle="o")
 
     Import.add_entry(
         folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-        group_number=7, group_name="AP-3-120 $\chi^2 < 1.00$", threshold_chisqr=1, color="#9FB6FD", linestyle="o")
+        group_number=7, group_name="$\chi^2 < 1.00$", threshold_chisqr=1, color="#9FB6FD", linestyle="o")
 
 
 ############ P04_v1 *** AP-3-120-Average_vs_Individual
 Import.add_entry(
     folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-    group_number=1, group_name="AP-3-120 singular", state="singular", color="k")
+    group_number=1, group_name=r"averaged spectrum", state="singular", color="k")
 
 Import.add_entry(
     folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
@@ -282,11 +285,11 @@ Import.add_entry(
 ############ P04_v2 *** AP-3-120-Average_vs_Individual
 Import.add_entry(
     folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-    group_number=1, group_name="AP-3-120 singular", state="singular", plot_individual_spectra=True, alpha=0.7)
+    group_number=1, group_name="individual spectrum", state="singular", plot_individual_spectra=True, alpha=0.7)
 
 Import.add_entry(
     folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-    group_number=2, group_name="AP-3-120 singular", state="singular", color="k")
+    group_number=2, group_name="averaged spectrum", state="singular", color="k")
 
 ############ P05 *** P05_AP-3-108_discard_first_day_reason_chisqr0.3
 Import.add_entry(
@@ -409,38 +412,43 @@ Import.add_entry(
         group_number=3, group_name="AP-4-17", color="r")
 
 ############ P10 *** P10_Comparison_chi
-    # All AP-3-108
-    Import.add_entry(
-        folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-08_AP-3-108_MultipleDots_2Batches/andor_export/",
-        group_number=1, group_name="CdSe494/CdS", color="b", selected_blobs=range(2, 10), threshold_chisqr=1.00, upper_limit_fwhm=0.2)
+# All AP-3-108
+Import.add_entry(
+    folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-08_AP-3-108_MultipleDots_2Batches/andor_export/",
+    group_number=1, group_name="CdSe494/CdS", color="b", selected_blobs=range(2, 10), threshold_chisqr=1.00,
+    upper_limit_fwhm=0.2)
 
-    Import.add_entry(
-        folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-11-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
-        group_number=1, group_name="CdSe494/CdS", color="b", threshold_chisqr=1.00, upper_limit_fwhm=0.2)
+Import.add_entry(
+    folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-11-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
+    group_number=1, group_name="CdSe494/CdS", color="b", threshold_chisqr=1.00, upper_limit_fwhm=0.2)
 
-    Import.add_entry(
-        folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-18-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
-        group_number=1, group_name="CdSe494/CdS", color="b", threshold_chisqr=1.00, upper_limit_fwhm=0.2)
+Import.add_entry(
+    folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-18-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
+    group_number=1, group_name="CdSe494/CdS", color="b", threshold_chisqr=1.00, upper_limit_fwhm=0.2)
 
-    Import.add_entry(
-        folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22_11_23/AP_3_108/andor_export/",
-        group_number=1, group_name="CdSe494/CdS", color="b", threshold_chisqr=1.00, upper_limit_fwhm=0.2)
+Import.add_entry(
+    folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22_11_23/AP_3_108/andor_export/",
+    group_number=1, group_name="CdSe494/CdS", color="b", threshold_chisqr=1.00, upper_limit_fwhm=0.2)
 
-    # All AP-3-120 Samples
-    Import.add_entry(
-        folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-        group_number=2, group_name=r"CdSe494/Cd\textsubscript{x}Zn\textsubscript{1-x}S", color="k", threshold_chisqr=1.00,
-        upper_limit_fwhm=0.12)
+# All AP-3-120 Samples
+Import.add_entry(
+    folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
+    group_number=2, group_name=r"CdSe494/Cd\textsubscript{x}Zn\textsubscript{1-x}S", color="k",
+    threshold_chisqr=1.00,
+    upper_limit_fwhm=0.12)
 
-    Import.add_entry(
-        folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-10-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
-        group_number=2, group_name=r"CdSe494/Cd\textsubscript{x}Zn\textsubscript{1-x}S", color="k", threshold_chisqr=1.00,
-        upper_limit_fwhm=0.12)
+Import.add_entry(
+    folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-10-AP-3-120_MultipleSingleDot_Measurement/andor_export/",
+    group_number=2, group_name=r"CdSe494/Cd\textsubscript{x}Zn\textsubscript{1-x}S", color="k",
+    threshold_chisqr=1.00,
+    upper_limit_fwhm=0.12)
 
-    # All AP-4-17
-    Import.add_entry(
-        folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-15-AP-4-17_MultipleSingleDot_Measurement/andor_export/",
-        group_number=3, group_name="CdSe567", color="r", threshold_chisqr=1.00, upper_limit_fwhm=0.2)
+# All AP-4-17
+Import.add_entry(
+    folder="/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-15-AP-4-17_MultipleSingleDot_Measurement/andor_export/",
+    group_number=3, group_name="CdSe567", color="r", threshold_chisqr=1.00, upper_limit_fwhm=0.2)
+
+Import.average_spectra(coarse_grid=True)
 
 ############ P11 *** P11_AP-3-120-True_vs_False_vs_Chi
     Import.add_entry(

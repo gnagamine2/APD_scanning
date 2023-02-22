@@ -315,7 +315,7 @@ if __name__ == "__main__":
 
         plt.close("all")
 
-    #%% Check some code from the measure_particles.py file
+    #%% Check some code from the 3_measure_particles.py file
     """
     MCLdata = load_obj(Mname + '_MCLdata', folder)
 

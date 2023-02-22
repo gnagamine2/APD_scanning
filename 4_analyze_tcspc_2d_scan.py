@@ -81,7 +81,7 @@ if __name__ == "__main__":
     """
     
 
-    folder = ["C:/Users/gabri/Documents/GitHub/APD_scanning/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/"]
+    folder = "/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17/"
     #folder = "T:/Gabriel/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/"
 
     
@@ -95,20 +95,17 @@ if __name__ == "__main__":
     folder = "T:/Gabriel/Data/22-11-23/AP_3_108/"
     """
     # All files for BSc JSANTEN
-    
-    list_folders = ["C:/Users/gabri/Documents/GitHub/APD_scanning/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/"]
-    
-    # list_folders = ["T:/Gabriel/Data/22-11-08_AP-3-108_MultipleDots_2Batches/",
-    #                 "T:/Gabriel/Data/22-11-10-AP-3-120_MultipleSingleDot_Measurement/",
-    #                 "T:/Gabriel/Data/22-11-11-AP-3-108_MultipleSingleDot_Measurement/",
-    #                 "T:/Gabriel/Data/22-11-15-AP-4-17_MultipleSingleDot_Measurement/", 
-    #                 "T:/Gabriel/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/",
-    #                 "T:/Gabriel/Data/22-11-18-AP-3-108_MultipleSingleDot_Measurement/",
-    #                 "T:/Gabriel/Data/22-11-21-AP-4-17_and_AP-4-24try_MultipleSingleDot_Measurement-MeasurementFailMidleNight/AP-4-17/",
-    #                 "T:/Gabriel/Data/22-11-23-AP-3-108_and_AP-4-24try_MultipleSingleDot_Measurement/AP_3_108/",
-    #                 "T:/Gabriel/Data/22-11-23-AP-3-108_and_AP-4-24try_MultipleSingleDot_Measurement/AP_4_24/FinalMeasurement/"]
+    list_folders = ["T:/Gabriel/Data/22-11-08_AP-3-108_MultipleDots_2Batches/",
+                    "T:/Gabriel/Data/22-11-10-AP-3-120_MultipleSingleDot_Measurement/",
+                    "T:/Gabriel/Data/22-11-11-AP-3-108_MultipleSingleDot_Measurement/",
+                    "T:/Gabriel/Data/22-11-15-AP-4-17_MultipleSingleDot_Measurement/", 
+                    "T:/Gabriel/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/",
+                    "T:/Gabriel/Data/22-11-18-AP-3-108_MultipleSingleDot_Measurement/",
+                    "T:/Gabriel/Data/22-11-21-AP-4-17_and_AP-4-24try_MultipleSingleDot_Measurement-MeasurementFailMidleNight/AP-4-17/",
+                    "T:/Gabriel/Data/22-11-23-AP-3-108_and_AP-4-24try_MultipleSingleDot_Measurement/AP_3_108/",
+                    "T:/Gabriel/Data/22-11-23-AP-3-108_and_AP-4-24try_MultipleSingleDot_Measurement/AP_4_24/FinalMeasurement/"]
 
-    # list_folders = ["C:/Users/gabri/Documents/GitHub/apd_scanning_imaging/Data/"]
+    list_folders = ["/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17-AP-3-120_MultipleSingleDot_Measurement/"]
 
 
     for folder in list_folders:

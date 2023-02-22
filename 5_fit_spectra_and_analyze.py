@@ -547,7 +547,7 @@ class SourceFiles:
         temp_path = os.path.join(parent_folder, "analysis", "g2") + "/state_files.csv"
 
         if os.path.isfile(temp_path):
-            print("g2 files from read_out.py script found for: ", folder)
+            print("g2 files from 4_analyze_tcspc_2d_scan.py script found for: ", folder)
 
             # create temp dataframe and append that to the existing df at the end
             df_temp = pd.read_csv(temp_path)
@@ -566,7 +566,7 @@ class SourceFiles:
             #print(self.df_g2_files[['import_no', 'state', 'particle_no', 'name']])
 
         else:
-            warn_text = "g2 files from read_out.py script *not* found for: " + folder
+            warn_text = "g2 files from 4_analyze_tcspc_2d_scan.py script *not* found for: " + folder
             warnings.warn(warn_text)
 
         # Check if the file already has been analyzed before using this scrip.
@@ -715,8 +715,8 @@ if __name__ == "__main__":
     Import = SourceFiles()
 
     Import.add_entry(
-        folder="//nas12.ethz.ch/mavt_ipe_omel_s1/temp/Gabriel/Data/23-01-26_AP_3_120_MultipleSingleDot/andor_export/",
-        min_energy=2.19, max_energy=2.44, bg_threshold=650)
+        folder="example_data/andor_export/",
+        min_energy=2.19, max_energy=2.44, bg_threshold=900)
 
     # Files to be analyzed
     print("Import.imports_to_be_analyzed): ", Import.imports_to_be_analyzed)
@@ -779,26 +779,6 @@ if __name__ == "__main__":
         Import.export_all_csv(filename=filename_local, savepath=save_folder_path_local,
                               g2df=g2df)
 
-    # This would create a global boxplot; however, I do not like the implementation. I will leave it here for backward
-    # compatibility only! If a comparison between different days is wanted use the Custom_Plots.py script
-    # JPS
-    """
-    filename_global = "AP-3-120_at_22-11-17"  # change the name
-    
-    # create global output folder
-    top_level_global_save = create_folder("/Users/JulianSanten/GIT/OMEL_GIT/Data/22-11-17/" + "analysis/")
-    save_folder_path_global = create_folder(top_level_global_save + "fit/")
-    print("Global Save Folder: ", save_folder_path_global)
-    
-    # create global boxplot
-    create_boxplot(Import.df, savepath=save_folder_path_global, filename=filename_global,
-                   bool_fit_gaussian=bool_fit_gaussian)
 
-    # create average for the individual days and an average for all days
-    Import.average_spectra(filename=filename_global, savepath=save_folder_path_global)
-
-    # export the global series and fit dataframes to csv
-    Import.export_series_to_csv(filename=filename_global, savepath=save_folder_path_global)
-    """
     print("all done")
     print("--- %.2f seconds ---" % (time.time() - start_time))
