@@ -37,130 +37,181 @@ class csvFiles:
     def __repr__(self):
         pass
 
-    def add_entry(self, filepath, color=None):
-        """
-        Loads data from a csv file and adds it as a new entry to the csvFiles object.
-    
-        Parameters
-        ----------
-        filepath : str
-            Path to the csv file containing the data.
-        color : str, optional
-            The color to be used for this entry in the boxplot graph. If not provided,
-            a default color will be used.
-        """
-        if color is None:
-            color = self.default_color
-    
-        data = np.genfromtxt(filepath, delimiter=",")
-        self.samples.append(data)
-        self.colors.append(color)
+    def add_entry(self, group_number: int, group_name: str, folder: str, state="", color="", threshold_chisqr=None,
+                  plot_individual_spectra=False, linestyle="", selected_blobs=[], alpha=2, upper_limit_fwhm=0.2):
+        self.parent_folder = os.path.dirname(os.path.dirname(folder))  # get parent directory of folder
 
-    
-
-    def create_boxplot(self, show_outliers=False, show_means=False, color_by_sample=False):
         """
-        Creates a boxplot graph from the data in the csvFiles object.
-    
-        Parameters
-        ----------
-        show_outliers : bool, optional
-            Whether or not to show outliers in the graph. Default is False.
-        show_means : bool, optional
-            Whether or not to show means in the graph. Default is False.
-        color_by_sample : bool, optional
-            Whether to color each box by sample (True) or to use a single color for all
-            boxes (False). Default is False.
-        """
-        data = self.samples
-        colors = self.colors
-        num_samples = len(data)
-    
-        # Determine the box colors
-        if color_by_sample:
-            box_colors = colors
-        else:
-            box_colors = [self.default_color] * num_samples
-    
-        # Create the boxplot graph
-        fig, ax = plt.subplots()
-        ax.boxplot(data, showfliers=show_outliers, showmeans=show_means,
-                   boxprops={'linewidth': 2, 'color': 'k'},
-                   whiskerprops={'linewidth': 2, 'color': 'k'},
-                   capprops={'linewidth': 2, 'color': 'k'},
-                   medianprops={'linewidth': 2, 'color': 'r'},
-                   meanprops={'linewidth': 2, 'color': 'b'},
-                   patch_artist=True,
-                   box_colors=box_colors)
-    
-        # Add labels and legend
-        ax.set_xticklabels([f"Sample {i+1}" for i in range(num_samples)])
-        ax.set_ylabel("Intensity (a.u.)")
-        if color_by_sample:
-            legend_handles = [mpatches.Patch(color=color, label=f"Sample {i+1}") for i, color in enumerate(colors)]
-            ax.legend(handles=legend_handles, loc="upper right")
-    
-        # Save the graph
-        if not os.path.exists(self.plot_folder):
-            os.makedirs(self.plot_folder)
-        fig.savefig(os.path.join(self.plot_folder, "boxplot.pdf"), bbox_inches="tight")
-
+        If no state is provided all files will be imported 
         
-        
+        Re-Import the previously created CSVs
 
-    # def create_boxplot(self):
-    #     # iterate over all group numbers
-    #     medianprops = dict(linewidth=1.5, linestyle='-', color='k')
-    #     sns.set_style("whitegrid")
-    #     sns.set_palette("bright")
-    #     #rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
-    #     #rc('text', usetex=True)
+        Make sure to:
+        * BUGFIX: import number is currently wrong (check the exported data frame).
+        * Think about rewriting the entire thing
+        * include the fit coeffients
+        * include the spectra information WITH information about the g2 fit. This might require a different g2 export
+        """
 
-    #     for i in self.df.group_number.drop_duplicates().tolist():
-    #         df = self.df_fit_coeffs[self.df_fit_coeffs["group_number"] == i]
-    #         # set the label: get the state and name from the df
-    #         label = str(df["group_name"].iloc[0])
+        df_temp = pd.DataFrame()
 
-    #         fig, axes = plt.subplots(1, 4, figsize=(9.5 * 3 / 3, 4.2))
-    #         fig.subplots_adjust(top=0.3)
+        # create temporary df that will be appended to df
+        self.parent_folder = os.path.join(os.path.dirname(os.path.dirname(folder)), "analysis", "fit", "export/")
 
-    #         plt.subplot(131)
-    #         label1 = str(np.round(np.mean(df["height"]), 3)) + " $\pm$ " + str(np.round(np.std(df["height"]), 3))
+        # import spectra
+        for filename in os.listdir(self.parent_folder):
 
-    #         plt.boxplot(df[["height"]].values, labels=[label1], medianprops=medianprops, showfliers=False)
-    #         xs = np.random.normal(1, 0.04,
-    #                               df[["height"]].values.shape[0])  # adds jitter to the data points - can be adjusted
-    #         plt.scatter(xs, df["height"], alpha=0.4, color="b")
-    #         plt.ylabel("height [a.u.]")
+            # boxplots (aka fit coefficients are imported)
+            if filename.endswith("fit_coeffs_local.csv") and "Lorentzian" in filename:
+                df_temp_fit = pd.read_csv(self.parent_folder + filename)
 
-    #         plt.subplot(132)
-    #         label2 = str(np.round(np.mean(df["mean"]), 3)) + " $\pm$ " + str(
-    #             np.round(np.std(df["mean"]), 3)) + " eV"
+                # extract the particle numbers
+                df_temp_fit['particle_no'] = df_temp_fit['filename'].apply(
+                    lambda f: int(re.search(r"(\d{1,4}).asc", f).group(1)))
 
-    #         plt.boxplot(df[["mean"]].values, labels=[label2], medianprops=medianprops, showfliers=False)
-    #         xs = np.random.normal(1, 0.04,
-    #                               df[["mean"]].values.shape[0])  # adds jitter to the data points - can be adjusted
-    #         plt.scatter(xs, df["mean"], alpha=0.4, color="r")
-    #         plt.ylabel("center [eV]")
+                if state is self.add_entry.__defaults__[0]:  # if no state is provided choose all
+                    pass
 
-    #         plt.subplot(133)
-    #         label3 = str(np.round(np.mean(df["fwhm"]), 3)) + " $\pm$ " + str(
-    #             np.round(np.std(df["fwhm"]), 3)) + " eV"
+                elif state is not self.add_entry.__defaults__[0] and state in ["singular", "non_singular", "discarded"]:
+                    df_temp_fit = df_temp_fit[df_temp_fit["state_g2"] == state]  # only select the state, chosen in the function call
 
-    #         plt.boxplot(df[["fwhm"]].values, labels=[label3], medianprops=medianprops, showfliers=False)
-    #         xs = np.random.normal(1, 0.04,
-    #                               df[["fwhm"]].values.shape[0])  # adds jitter to the data points - can be adjusted
-    #         plt.scatter(xs, df["fwhm"], alpha=0.4, color="m")
-    #         plt.ylabel("FWHM [eV]")
+                elif state is not self.add_entry.__defaults__[0] and state in [True, False]:# included state is given (this is a bool)
+                    df_temp_fit = df_temp_fit[df_temp_fit["included"] == state]
 
-    #         plt.suptitle(
-    #             label + " - " + str(np.shape(df)[0]) + " Particles")
-    #         fig.tight_layout()
-    #         fig.savefig(self.save_folder + self.timestr + "_Box_Plot_Group_" + str(i) + "_.pdf")
-    #         fig.savefig(self.save_folder + self.timestr + "_Box_Plot_Group_" + str(i) + "_.png",dpi=600,
-    #                     transparent=False)
+                else:
+                    warnings.warn(
+                        'State not recognized. Either choose no state at all or "singular", "non_singular", \
+                        "discarded" or the boolean values True or False (not a string!)')
 
-    #     plt.close("all")
+                if selected_blobs is not self.add_entry.__defaults__[5]:  # if selected_blobs is provided
+                    df_temp_fit = df_temp_fit[df_temp_fit['particle_no'].isin(selected_blobs)]  # select specified blobs
+
+                if threshold_chisqr is not self.add_entry.__defaults__[2]:  # if chi_squared is provided
+                    df_temp_fit = df_temp_fit[(df_temp_fit["chisqr_normed"] < threshold_chisqr) &
+                                      (df_temp_fit["height_normed"] <= 1.2) &
+                                      (df_temp_fit["a_normed"] <= 2) &
+                                      (df_temp_fit["mean"] <= 2.6) &  # ATTENTION: Hardvoded energy cut-off
+                                      (df_temp_fit["mean"] >= 2.0) &
+                                      (df_temp_fit["sigma"] >= 0.027) &
+                                      (df_temp_fit["sigma"] <= 1) &
+                                      (df_temp_fit["fwhm"] <= upper_limit_fwhm)]
+
+                    if np.shape(df_temp_fit)[0] == 0:
+                        print("chisqr too low")
+
+
+                df_temp_fit["group_number"] = group_number
+                df_temp_fit["group_name"] = group_name
+
+            elif filename.endswith("_series_local.csv") and "Lorentzian" in filename:  # find file that ends with _series_local #TODO: Make this part of the function call
+                df_temp = pd.read_csv(self.parent_folder + filename)
+
+                if state is self.add_entry.__defaults__[0]:  # if no state is provided choose all
+                    #print("no state")
+                    pass
+
+                elif state is not self.add_entry.__defaults__[0]:  # if state is provided check what kind of state
+
+                    if state in ["singular", "non_singular", "discarded"]:  # check if a g2 state is given
+                        print("g2 state")
+                        df_temp = df_temp[df_temp["state"] == state]  # only select the state, chosen in the function call
+
+                    elif state in [True, False]:  # included state is given (this is a bool)
+                        print("boolean state")
+                        df_temp = df_temp[df_temp["included"] == state]
+
+                else:
+                    warnings.warn(
+                        'State not recognized. Either choose no state at all or "singular", "non_singular", \
+                        "discarded" or the boolean values True or False (not a string!)')
+
+                if selected_blobs is not self.add_entry.__defaults__[5]:  # if selected_blobs is provided
+                    # extract the particle numbers
+                    print("selected blobs")
+                    df_temp = df_temp[df_temp['counter_spectrum'].isin(selected_blobs)]  # select specified blobs
+
+                if threshold_chisqr is not self.add_entry.__defaults__[2]:  # if chi_squared is provided
+                    df_temp = df_temp[(df_temp["chisqr_normed"] < threshold_chisqr) &
+                                      (df_temp["height_normed"] <= 1.2) &
+                                      (df_temp["a_normed"] <= 2) &
+                                      (df_temp["mean"] <= 2.6) &  # ATTENTION: Hardcoded energy cut-off
+                                      (df_temp["mean"] >= 2.0) &
+                                      (df_temp["sigma"] >= 0.027) &
+                                      (df_temp["sigma"] <= 1) &
+                                      (df_temp["fwhm"] <= upper_limit_fwhm)]
+
+                df_temp["group_number"] = group_number
+                df_temp["group_name"] = group_name
+
+        # after iterating over all files
+        if color is not self.add_entry.__defaults__[1]:  # if color is provided add this color
+            df_temp["color"] = color  # add the color for the spectrum plot, if color is wanted
+
+        if plot_individual_spectra is not self.add_entry.__defaults__[3]:  # if plot_individual_spectra provided: add it
+            df_temp["plot_individual_spectra"] = plot_individual_spectra
+
+        if linestyle is not self.add_entry.__defaults__[4]:  # if linestyle is provided
+            df_temp["linestyle"] = linestyle
+
+        if alpha is not self.add_entry.__defaults__[6]:  # if alpha is provided
+            df_temp["alpha"] = alpha
+
+        self.df = pd.concat([self.df, df_temp], ignore_index=True)
+        self.df_fit_coeffs = pd.concat([self.df_fit_coeffs, df_temp_fit], ignore_index=True)
+
+    def create_boxplot(self):
+        # iterate over all group numbers
+        medianprops = dict(linewidth=1.5, linestyle='-', color='k')
+        sns.set_style("whitegrid")
+        sns.set_palette("bright")
+        #rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
+        #rc('text', usetex=True)
+
+        for i in self.df.group_number.drop_duplicates().tolist():
+            df = self.df_fit_coeffs[self.df_fit_coeffs["group_number"] == i]
+            # set the label: get the state and name from the df
+            label = str(df["group_name"].iloc[0])
+
+            fig, axes = plt.subplots(1, 4, figsize=(9.5 * 3 / 3, 4.2))
+            fig.subplots_adjust(top=0.3)
+
+            plt.subplot(131)
+            label1 = str(np.round(np.mean(df["height"]), 3)) + " $\pm$ " + str(np.round(np.std(df["height"]), 3))
+
+            plt.boxplot(df[["height"]].values, labels=[label1], medianprops=medianprops, showfliers=False)
+            xs = np.random.normal(1, 0.04,
+                                  df[["height"]].values.shape[0])  # adds jitter to the data points - can be adjusted
+            plt.scatter(xs, df["height"], alpha=0.4, color="b")
+            plt.ylabel("height [a.u.]")
+
+            plt.subplot(132)
+            label2 = str(np.round(np.mean(df["mean"]), 3)) + " $\pm$ " + str(
+                np.round(np.std(df["mean"]), 3)) + " eV"
+
+            plt.boxplot(df[["mean"]].values, labels=[label2], medianprops=medianprops, showfliers=False)
+            xs = np.random.normal(1, 0.04,
+                                  df[["mean"]].values.shape[0])  # adds jitter to the data points - can be adjusted
+            plt.scatter(xs, df["mean"], alpha=0.4, color="r")
+            plt.ylabel("center [eV]")
+
+            plt.subplot(133)
+            label3 = str(np.round(np.mean(df["fwhm"]), 3)) + " $\pm$ " + str(
+                np.round(np.std(df["fwhm"]), 3)) + " eV"
+
+            plt.boxplot(df[["fwhm"]].values, labels=[label3], medianprops=medianprops, showfliers=False)
+            xs = np.random.normal(1, 0.04,
+                                  df[["fwhm"]].values.shape[0])  # adds jitter to the data points - can be adjusted
+            plt.scatter(xs, df["fwhm"], alpha=0.4, color="m")
+            plt.ylabel("FWHM [eV]")
+
+            plt.suptitle(
+                label + " - " + str(np.shape(df)[0]) + " Particles")
+            fig.tight_layout()
+            fig.savefig(self.save_folder + self.timestr + "_Box_Plot_Group_" + str(i) + "_.pdf")
+            fig.savefig(self.save_folder + self.timestr + "_Box_Plot_Group_" + str(i) + "_.png",dpi=600,
+                        transparent=False)
+
+        plt.close("all")
 
     def create_boxplot_side_by_side(self):
         # iterate over all group numbers
@@ -382,28 +433,17 @@ if __name__ == "__main__":
         group_number=1, group_name="AP-3-108", color="b", threshold_chisqr=1, upper_limit_fwhm=0.15)
     Import.add_entry(
         folder="C:/DataAnalysis/AP_3_108/22-11-11-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
-        group_number=1, group_name="AP-3-108", color="b", threshold_chisqr=1, upper_limit_fwhm=0.15)
+        group_number=1, group_name="AP-3-108", color="r", threshold_chisqr=1, upper_limit_fwhm=0.15)
     Import.add_entry(
         folder="C:/DataAnalysis/AP_3_108/22-11-18-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
-        group_number=1, group_name="AP-3-108", color="b", threshold_chisqr=1, upper_limit_fwhm=0.15)
+        group_number=1, group_name="AP-3-108", color="g", threshold_chisqr=1, upper_limit_fwhm=0.15)
     Import.add_entry(
         folder="C:/DataAnalysis/AP_3_108/22-11-23-AP_3_108/andor_export_2/",
-        group_number=1, group_name="AP-3-108", color="b", threshold_chisqr=1, upper_limit_fwhm=0.15)
+        group_number=1, group_name="AP-3-108", color="c", threshold_chisqr=1, upper_limit_fwhm=0.15)
+    
+    Import.create_boxplot()
+    Import.create_boxplot_side_by_side()
+    Import.create_correlation_plots_side_by_side()
 
-
-    color_list = ['red', 'green', 'orange', 'purple']
-    Import.add_entry("csv/3660-3700.csv", color_list=color_list)
-    Import.add_entry("csv/3725-3765.csv", color_list=color_list)
-    Import.add_entry("csv/3790-3830.csv", color_list=color_list)
-    Import.add_entry("csv/3860-3900.csv", color_list=color_list)
-
-    Import.create_boxplot(show_outliers=True, show_means=True, color_by_sample=True)
-
-
-
-    # Import.create_boxplot()
-    # Import.create_boxplot_side_by_side()
-    # Import.create_correlation_plots_side_by_side()
-
-    # Import.average_spectra(coarse_grid=False)
-    # Import.export_all_csv()
+    Import.average_spectra(coarse_grid=False)
+    Import.export_all_csv()
