@@ -37,162 +37,74 @@ class csvFiles:
     def __repr__(self):
         pass
 
-    def add_entry(self, group_number: int, group_name: str, folder: str, state="", color="", threshold_chisqr=None,
-                  plot_individual_spectra=False, linestyle="", selected_blobs=[], alpha=2, upper_limit_fwhm=0.2):
-        self.parent_folder = os.path.dirname(os.path.dirname(folder))  # get parent directory of folder
-
+    def add_entry(self, filepath, color=None):
         """
-        If no state is provided all files will be imported 
-        
-        Re-Import the previously created CSVs
-
-        Make sure to:
-        * BUGFIX: import number is currently wrong (check the exported data frame).
-        * Think about rewriting the entire thing
-        * include the fit coeffients
-        * include the spectra information WITH information about the g2 fit. This might require a different g2 export
+        Loads data from a csv file and adds it as a new entry to the csvFiles object.
+    
+        Parameters
+        ----------
+        filepath : str
+            Path to the csv file containing the data.
+        color : str, optional
+            The color to be used for this entry in the boxplot graph. If not provided,
+            a default color will be used.
         """
+        if color is None:
+            color = self.default_color
+    
+        data = np.genfromtxt(filepath, delimiter=",")
+        self.samples.append(data)
+        self.colors.append(color)
 
-        df_temp = pd.DataFrame()
+    
 
-        # create temporary df that will be appended to df
-        self.parent_folder = os.path.join(os.path.dirname(os.path.dirname(folder)), "analysis", "fit", "export/")
+    def create_boxplot(self, show_outliers=False, show_means=False, color_by_sample=False):
+        """
+        Creates a boxplot graph from the data in the csvFiles object.
+    
+        Parameters
+        ----------
+        show_outliers : bool, optional
+            Whether or not to show outliers in the graph. Default is False.
+        show_means : bool, optional
+            Whether or not to show means in the graph. Default is False.
+        color_by_sample : bool, optional
+            Whether to color each box by sample (True) or to use a single color for all
+            boxes (False). Default is False.
+        """
+        data = self.samples
+        colors = self.colors
+        num_samples = len(data)
+    
+        # Determine the box colors
+        if color_by_sample:
+            box_colors = colors
+        else:
+            box_colors = [self.default_color] * num_samples
+    
+        # Create the boxplot graph
+        fig, ax = plt.subplots()
+        ax.boxplot(data, showfliers=show_outliers, showmeans=show_means,
+                   boxprops={'linewidth': 2, 'color': 'k'},
+                   whiskerprops={'linewidth': 2, 'color': 'k'},
+                   capprops={'linewidth': 2, 'color': 'k'},
+                   medianprops={'linewidth': 2, 'color': 'r'},
+                   meanprops={'linewidth': 2, 'color': 'b'},
+                   patch_artist=True,
+                   box_colors=box_colors)
+    
+        # Add labels and legend
+        ax.set_xticklabels([f"Sample {i+1}" for i in range(num_samples)])
+        ax.set_ylabel("Intensity (a.u.)")
+        if color_by_sample:
+            legend_handles = [mpatches.Patch(color=color, label=f"Sample {i+1}") for i, color in enumerate(colors)]
+            ax.legend(handles=legend_handles, loc="upper right")
+    
+        # Save the graph
+        if not os.path.exists(self.plot_folder):
+            os.makedirs(self.plot_folder)
+        fig.savefig(os.path.join(self.plot_folder, "boxplot.pdf"), bbox_inches="tight")
 
-        # import spectra
-        for filename in os.listdir(self.parent_folder):
-
-            # boxplots (aka fit coefficients are imported)
-            if filename.endswith("fit_coeffs_local.csv") and "Lorentzian" in filename:
-                df_temp_fit = pd.read_csv(self.parent_folder + filename)
-
-                # extract the particle numbers
-                df_temp_fit['particle_no'] = df_temp_fit['filename'].apply(
-                    lambda f: int(re.search(r"(\d{1,4}).asc", f).group(1)))
-
-                if state is self.add_entry.__defaults__[0]:  # if no state is provided choose all
-                    pass
-
-                elif state is not self.add_entry.__defaults__[0] and state in ["singular", "non_singular", "discarded"]:
-                    df_temp_fit = df_temp_fit[df_temp_fit["state_g2"] == state]  # only select the state, chosen in the function call
-
-                elif state is not self.add_entry.__defaults__[0] and state in [True, False]:# included state is given (this is a bool)
-                    df_temp_fit = df_temp_fit[df_temp_fit["included"] == state]
-
-                else:
-                    warnings.warn(
-                        'State not recognized. Either choose no state at all or "singular", "non_singular", \
-                        "discarded" or the boolean values True or False (not a string!)')
-
-                if selected_blobs is not self.add_entry.__defaults__[5]:  # if selected_blobs is provided
-                    df_temp_fit = df_temp_fit[df_temp_fit['particle_no'].isin(selected_blobs)]  # select specified blobs
-
-                if threshold_chisqr is not self.add_entry.__defaults__[2]:  # if chi_squared is provided
-                    df_temp_fit = df_temp_fit[(df_temp_fit["chisqr_normed"] < threshold_chisqr) &
-                                      (df_temp_fit["height_normed"] <= 1.2) &
-                                      (df_temp_fit["a_normed"] <= 2) &
-                                      (df_temp_fit["mean"] <= 2.6) &  # ATTENTION: Hardvoded energy cut-off
-                                      (df_temp_fit["mean"] >= 2.0) &
-                                      (df_temp_fit["sigma"] >= 0.027) &
-                                      (df_temp_fit["sigma"] <= 1) &
-                                      (df_temp_fit["fwhm"] <= upper_limit_fwhm)]
-
-                    if np.shape(df_temp_fit)[0] == 0:
-                        print("chisqr too low")
-
-
-                df_temp_fit["group_number"] = group_number
-                df_temp_fit["group_name"] = group_name
-
-            elif filename.endswith("_series_local.csv") and "Lorentzian" in filename:  # find file that ends with _series_local #TODO: Make this part of the function call
-                df_temp = pd.read_csv(self.parent_folder + filename)
-
-                if state is self.add_entry.__defaults__[0]:  # if no state is provided choose all
-                    #print("no state")
-                    pass
-
-                elif state is not self.add_entry.__defaults__[0]:  # if state is provided check what kind of state
-
-                    if state in ["singular", "non_singular", "discarded"]:  # check if a g2 state is given
-                        print("g2 state")
-                        df_temp = df_temp[df_temp["state"] == state]  # only select the state, chosen in the function call
-
-                    elif state in [True, False]:  # included state is given (this is a bool)
-                        print("boolean state")
-                        df_temp = df_temp[df_temp["included"] == state]
-
-                else:
-                    warnings.warn(
-                        'State not recognized. Either choose no state at all or "singular", "non_singular", \
-                        "discarded" or the boolean values True or False (not a string!)')
-
-                if selected_blobs is not self.add_entry.__defaults__[5]:  # if selected_blobs is provided
-                    # extract the particle numbers
-                    print("selected blobs")
-                    df_temp = df_temp[df_temp['counter_spectrum'].isin(selected_blobs)]  # select specified blobs
-
-                if threshold_chisqr is not self.add_entry.__defaults__[2]:  # if chi_squared is provided
-                    df_temp = df_temp[(df_temp["chisqr_normed"] < threshold_chisqr) &
-                                      (df_temp["height_normed"] <= 1.2) &
-                                      (df_temp["a_normed"] <= 2) &
-                                      (df_temp["mean"] <= 2.6) &  # ATTENTION: Hardcoded energy cut-off
-                                      (df_temp["mean"] >= 2.0) &
-                                      (df_temp["sigma"] >= 0.027) &
-                                      (df_temp["sigma"] <= 1) &
-                                      (df_temp["fwhm"] <= upper_limit_fwhm)]
-
-                df_temp["group_number"] = group_number
-                df_temp["group_name"] = group_name
-
-        # after iterating over all files
-        if color is not self.add_entry.__defaults__[1]:  # if color is provided add this color
-            df_temp["color"] = color  # add the color for the spectrum plot, if color is wanted
-
-        if plot_individual_spectra is not self.add_entry.__defaults__[3]:  # if plot_individual_spectra provided: add it
-            df_temp["plot_individual_spectra"] = plot_individual_spectra
-
-        if linestyle is not self.add_entry.__defaults__[4]:  # if linestyle is provided
-            df_temp["linestyle"] = linestyle
-
-        if alpha is not self.add_entry.__defaults__[6]:  # if alpha is provided
-            df_temp["alpha"] = alpha
-
-        self.df = pd.concat([self.df, df_temp], ignore_index=True)
-        self.df_fit_coeffs = pd.concat([self.df_fit_coeffs, df_temp_fit], ignore_index=True)
-
-        def create_boxplot(self, show_outliers=False, show_means=False, color_by_sample=False):
-            """
-            Create box plots for each sample.
-        
-            Parameters:
-                show_outliers (bool): Whether or not to show outliers. Default is False.
-                show_means (bool): Whether or not to show means. Default is False.
-                color_by_sample (bool): Whether to color the boxplots by sample or not. Default is False.
-            """
-            fig, ax = plt.subplots()
-            samples_data = []
-            if color_by_sample:
-                color_cycle = plt.rcParams['axes.prop_cycle'].by_key()['color']
-            for i, sample in enumerate(self.samples):
-                data = []
-                for entry in self.entries:
-                    if entry.sample == sample:
-                        data.append(entry.intensity)
-                if color_by_sample:
-                    color = color_cycle[i % len(color_cycle)]
-                else:
-                    color = 'blue'
-                samples_data.append(data)
-                positions = [i+1]
-                ax.boxplot(data, positions=positions, showfliers=show_outliers, showmeans=show_means, boxprops=dict(color=color))
-            ax.set_xticklabels(self.samples)
-            ax.set_ylabel("Intensity (a.u.)")
-            ax.set_xlabel("Sample")
-            if color_by_sample:
-                patches = [mpatches.Patch(color=color_cycle[i % len(color_cycle)], label=s) for i, s in enumerate(self.samples)]
-                plt.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc='upper left')
-            else:
-                plt.legend()
-            return fig, ax, samples_data
         
         
 
