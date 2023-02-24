@@ -159,57 +159,42 @@ class csvFiles:
         self.df = pd.concat([self.df, df_temp], ignore_index=True)
         self.df_fit_coeffs = pd.concat([self.df_fit_coeffs, df_temp_fit], ignore_index=True)
 
-    def create_boxplot(self, show_outliers=False, show_means=False, color_by_sample=False, color_list=None):
-
-        """
-        Generates a box plot of the csv data.
-    
-        :param show_outliers: boolean, whether to show outlier points, default False
-        :param show_means: boolean, whether to show mean points, default False
-        :param color_by_sample: boolean, whether to color points by sample, default False
-        """
-        fig, ax = plt.subplots()
-    
-        if color_by_sample:
-            # create a dictionary of sample names and their respective colors
-            sample_colors = {}
-            for i, sample in enumerate(self.samples):
-                sample_colors[sample] = f"C{i}"
-    
-        # iterate over each sample and plot their data
-        for i, sample in enumerate(self.samples):
-            if color_by_sample and color_list:
-                color = color_list[i % len(color_list)]
-            else:
-                color = 'blue'
-
-            sample_data = self.data[self.data[self.sample_col] == sample][self.value_cols].values
-            positions = np.arange(len(sample_data[0])) + 1
-    
+        def create_boxplot(self, show_outliers=False, show_means=False, color_by_sample=False):
+            """
+            Create box plots for each sample.
+        
+            Parameters:
+                show_outliers (bool): Whether or not to show outliers. Default is False.
+                show_means (bool): Whether or not to show means. Default is False.
+                color_by_sample (bool): Whether to color the boxplots by sample or not. Default is False.
+            """
+            fig, ax = plt.subplots()
+            samples_data = []
             if color_by_sample:
-                ax.boxplot(sample_data, positions=positions, showfliers=show_outliers, showmeans=show_means,
-                           patch_artist=True, boxprops=dict(facecolor=sample_colors[sample]),
-                           capprops=dict(color=sample_colors[sample]), whiskerprops=dict(color=sample_colors[sample]),
-                           flierprops=dict(color=sample_colors[sample], markeredgecolor=sample_colors[sample]),
-                           medianprops=dict(color=sample_colors[sample]))
+                color_cycle = plt.rcParams['axes.prop_cycle'].by_key()['color']
+            for i, sample in enumerate(self.samples):
+                data = []
+                for entry in self.entries:
+                    if entry.sample == sample:
+                        data.append(entry.intensity)
+                if color_by_sample:
+                    color = color_cycle[i % len(color_cycle)]
+                else:
+                    color = 'blue'
+                samples_data.append(data)
+                positions = [i+1]
+                ax.boxplot(data, positions=positions, showfliers=show_outliers, showmeans=show_means, boxprops=dict(color=color))
+            ax.set_xticklabels(self.samples)
+            ax.set_ylabel("Intensity (a.u.)")
+            ax.set_xlabel("Sample")
+            if color_by_sample:
+                patches = [mpatches.Patch(color=color_cycle[i % len(color_cycle)], label=s) for i, s in enumerate(self.samples)]
+                plt.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc='upper left')
             else:
-                ax.boxplot(sample_data, positions=positions, showfliers=show_outliers, showmeans=show_means)
-    
-        ax.set_xticks(positions)
-        ax.set_xticklabels(self.value_cols)
-        ax.set_xlabel("Parameter")
-        ax.set_ylabel("Value")
-        ax.set_title("Box plot of CSV data")
-        ax.grid()
-    
-        if color_by_sample:
-        # create legend with sample names and colors
-            patches = [mpatches.Patch(color=color, label=sample) for sample, color in sample_colors.items()]
-            ax.legend(handles=patches, loc='upper left')
-    
-        plt.show()
-
-
+                plt.legend()
+            return fig, ax, samples_data
+        
+        
 
     # def create_boxplot(self):
     #     # iterate over all group numbers
@@ -500,7 +485,7 @@ if __name__ == "__main__":
     Import.add_entry("csv/3790-3830.csv", color_list=color_list)
     Import.add_entry("csv/3860-3900.csv", color_list=color_list)
 
-    Import.create_boxplot(color_by_sample=True)
+    Import.create_boxplot(show_outliers=True, show_means=True, color_by_sample=True)
 
 
 
