@@ -159,7 +159,8 @@ class csvFiles:
         self.df = pd.concat([self.df, df_temp], ignore_index=True)
         self.df_fit_coeffs = pd.concat([self.df_fit_coeffs, df_temp_fit], ignore_index=True)
 
-    def create_boxplot(self, show_outliers=False, show_means=False, color_by_sample=False):
+    def create_boxplot(self, show_outliers=False, show_means=False, color_by_sample=False, color_list=None):
+
         """
         Generates a box plot of the csv data.
     
@@ -177,6 +178,11 @@ class csvFiles:
     
         # iterate over each sample and plot their data
         for i, sample in enumerate(self.samples):
+            if color_by_sample and color_list:
+                color = color_list[i % len(color_list)]
+            else:
+                color = 'blue'
+
             sample_data = self.data[self.data[self.sample_col] == sample][self.value_cols].values
             positions = np.arange(len(sample_data[0])) + 1
     
@@ -486,6 +492,13 @@ if __name__ == "__main__":
     Import.add_entry(
         folder="C:/DataAnalysis/AP_3_108/22-11-23-AP_3_108/andor_export_2/",
         group_number=1, group_name="AP-3-108", color="b", threshold_chisqr=1, upper_limit_fwhm=0.15)
+
+
+    color_list = ['red', 'green', 'orange', 'purple']
+    Import.add_entry("csv/3660-3700.csv", color_list=color_list)
+    Import.add_entry("csv/3725-3765.csv", color_list=color_list)
+    Import.add_entry("csv/3790-3830.csv", color_list=color_list)
+    Import.add_entry("csv/3860-3900.csv", color_list=color_list)
 
     Import.create_boxplot(color_by_sample=True)
 
