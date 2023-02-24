@@ -717,15 +717,15 @@ if __name__ == "__main__":
     Import.add_entry(
         folder="C:/DataAnalysis/AP_3_108/22-11-08_AP-3-108_MultipleDots_2Batches/andor_export/",
         min_energy=2.25, max_energy=2.44, bg_threshold=1200)
-    # Import.add_entry(
-    #     folder="C:/DataAnalysis/AP_3_108/22-11-11-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
-    #     min_energy=2.23, max_energy=2.46, bg_threshold=1000)
-    # Import.add_entry(
-    #     folder="C:/DataAnalysis/AP_3_108/22-11-18-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
-    #     min_energy=2.23, max_energy=2.44, bg_threshold=1000)
-    # Import.add_entry(
-    #     folder="C:/DataAnalysis/AP_3_108/22-11-23-AP_3_108/andor_export_2/",
-    #     min_energy=2.17, max_energy=2.44, bg_threshold=1000)
+    Import.add_entry(
+        folder="C:/DataAnalysis/AP_3_108/22-11-11-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
+        min_energy=2.23, max_energy=2.46, bg_threshold=1000)
+    Import.add_entry(
+        folder="C:/DataAnalysis/AP_3_108/22-11-18-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
+        min_energy=2.23, max_energy=2.44, bg_threshold=1000)
+    Import.add_entry(
+        folder="C:/DataAnalysis/AP_3_108/22-11-23-AP_3_108/andor_export_2/",
+        min_energy=2.17, max_energy=2.44, bg_threshold=1000)
     
     # Import.add_entry(
     #     folder="C:/Users/gabri/Documents/GitHub/Scanning_Fitting_GN_persona_rep/example_data/andor_export/",

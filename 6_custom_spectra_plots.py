@@ -159,59 +159,105 @@ class csvFiles:
         self.df = pd.concat([self.df, df_temp], ignore_index=True)
         self.df_fit_coeffs = pd.concat([self.df_fit_coeffs, df_temp_fit], ignore_index=True)
 
-    def create_boxplot(self):
-        # iterate over all group numbers
-        medianprops = dict(linewidth=1.5, linestyle='-', color='k')
-        sns.set_style("whitegrid")
-        sns.set_palette("bright")
-        #rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
-        #rc('text', usetex=True)
+    def create_boxplot(self, show_outliers=False, show_means=False, color_by_sample=False):
+        """
+        Generates a box plot of the csv data.
+    
+        :param show_outliers: boolean, whether to show outlier points, default False
+        :param show_means: boolean, whether to show mean points, default False
+        :param color_by_sample: boolean, whether to color points by sample, default False
+        """
+        fig, ax = plt.subplots()
+    
+        if color_by_sample:
+            # create a dictionary of sample names and their respective colors
+            sample_colors = {}
+            for i, sample in enumerate(self.samples):
+                sample_colors[sample] = f"C{i}"
+    
+        # iterate over each sample and plot their data
+        for i, sample in enumerate(self.samples):
+            sample_data = self.data[self.data[self.sample_col] == sample][self.value_cols].values
+            positions = np.arange(len(sample_data[0])) + 1
+    
+            if color_by_sample:
+                ax.boxplot(sample_data, positions=positions, showfliers=show_outliers, showmeans=show_means,
+                           patch_artist=True, boxprops=dict(facecolor=sample_colors[sample]),
+                           capprops=dict(color=sample_colors[sample]), whiskerprops=dict(color=sample_colors[sample]),
+                           flierprops=dict(color=sample_colors[sample], markeredgecolor=sample_colors[sample]),
+                           medianprops=dict(color=sample_colors[sample]))
+            else:
+                ax.boxplot(sample_data, positions=positions, showfliers=show_outliers, showmeans=show_means)
+    
+        ax.set_xticks(positions)
+        ax.set_xticklabels(self.value_cols)
+        ax.set_xlabel("Parameter")
+        ax.set_ylabel("Value")
+        ax.set_title("Box plot of CSV data")
+        ax.grid()
+    
+        if color_by_sample:
+        # create legend with sample names and colors
+            patches = [mpatches.Patch(color=color, label=sample) for sample, color in sample_colors.items()]
+            ax.legend(handles=patches, loc='upper left')
+    
+        plt.show()
 
-        for i in self.df.group_number.drop_duplicates().tolist():
-            df = self.df_fit_coeffs[self.df_fit_coeffs["group_number"] == i]
-            # set the label: get the state and name from the df
-            label = str(df["group_name"].iloc[0])
 
-            fig, axes = plt.subplots(1, 4, figsize=(9.5 * 3 / 3, 4.2))
-            fig.subplots_adjust(top=0.3)
 
-            plt.subplot(131)
-            label1 = str(np.round(np.mean(df["height"]), 3)) + " $\pm$ " + str(np.round(np.std(df["height"]), 3))
+    # def create_boxplot(self):
+    #     # iterate over all group numbers
+    #     medianprops = dict(linewidth=1.5, linestyle='-', color='k')
+    #     sns.set_style("whitegrid")
+    #     sns.set_palette("bright")
+    #     #rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
+    #     #rc('text', usetex=True)
 
-            plt.boxplot(df[["height"]].values, labels=[label1], medianprops=medianprops, showfliers=False)
-            xs = np.random.normal(1, 0.04,
-                                  df[["height"]].values.shape[0])  # adds jitter to the data points - can be adjusted
-            plt.scatter(xs, df["height"], alpha=0.4, color="b")
-            plt.ylabel("height [a.u.]")
+    #     for i in self.df.group_number.drop_duplicates().tolist():
+    #         df = self.df_fit_coeffs[self.df_fit_coeffs["group_number"] == i]
+    #         # set the label: get the state and name from the df
+    #         label = str(df["group_name"].iloc[0])
 
-            plt.subplot(132)
-            label2 = str(np.round(np.mean(df["mean"]), 3)) + " $\pm$ " + str(
-                np.round(np.std(df["mean"]), 3)) + " eV"
+    #         fig, axes = plt.subplots(1, 4, figsize=(9.5 * 3 / 3, 4.2))
+    #         fig.subplots_adjust(top=0.3)
 
-            plt.boxplot(df[["mean"]].values, labels=[label2], medianprops=medianprops, showfliers=False)
-            xs = np.random.normal(1, 0.04,
-                                  df[["mean"]].values.shape[0])  # adds jitter to the data points - can be adjusted
-            plt.scatter(xs, df["mean"], alpha=0.4, color="r")
-            plt.ylabel("center [eV]")
+    #         plt.subplot(131)
+    #         label1 = str(np.round(np.mean(df["height"]), 3)) + " $\pm$ " + str(np.round(np.std(df["height"]), 3))
 
-            plt.subplot(133)
-            label3 = str(np.round(np.mean(df["fwhm"]), 3)) + " $\pm$ " + str(
-                np.round(np.std(df["fwhm"]), 3)) + " eV"
+    #         plt.boxplot(df[["height"]].values, labels=[label1], medianprops=medianprops, showfliers=False)
+    #         xs = np.random.normal(1, 0.04,
+    #                               df[["height"]].values.shape[0])  # adds jitter to the data points - can be adjusted
+    #         plt.scatter(xs, df["height"], alpha=0.4, color="b")
+    #         plt.ylabel("height [a.u.]")
 
-            plt.boxplot(df[["fwhm"]].values, labels=[label3], medianprops=medianprops, showfliers=False)
-            xs = np.random.normal(1, 0.04,
-                                  df[["fwhm"]].values.shape[0])  # adds jitter to the data points - can be adjusted
-            plt.scatter(xs, df["fwhm"], alpha=0.4, color="m")
-            plt.ylabel("FWHM [eV]")
+    #         plt.subplot(132)
+    #         label2 = str(np.round(np.mean(df["mean"]), 3)) + " $\pm$ " + str(
+    #             np.round(np.std(df["mean"]), 3)) + " eV"
 
-            plt.suptitle(
-                label + " - " + str(np.shape(df)[0]) + " Particles")
-            fig.tight_layout()
-            fig.savefig(self.save_folder + self.timestr + "_Box_Plot_Group_" + str(i) + "_.pdf")
-            fig.savefig(self.save_folder + self.timestr + "_Box_Plot_Group_" + str(i) + "_.png",dpi=600,
-                        transparent=False)
+    #         plt.boxplot(df[["mean"]].values, labels=[label2], medianprops=medianprops, showfliers=False)
+    #         xs = np.random.normal(1, 0.04,
+    #                               df[["mean"]].values.shape[0])  # adds jitter to the data points - can be adjusted
+    #         plt.scatter(xs, df["mean"], alpha=0.4, color="r")
+    #         plt.ylabel("center [eV]")
 
-        plt.close("all")
+    #         plt.subplot(133)
+    #         label3 = str(np.round(np.mean(df["fwhm"]), 3)) + " $\pm$ " + str(
+    #             np.round(np.std(df["fwhm"]), 3)) + " eV"
+
+    #         plt.boxplot(df[["fwhm"]].values, labels=[label3], medianprops=medianprops, showfliers=False)
+    #         xs = np.random.normal(1, 0.04,
+    #                               df[["fwhm"]].values.shape[0])  # adds jitter to the data points - can be adjusted
+    #         plt.scatter(xs, df["fwhm"], alpha=0.4, color="m")
+    #         plt.ylabel("FWHM [eV]")
+
+    #         plt.suptitle(
+    #             label + " - " + str(np.shape(df)[0]) + " Particles")
+    #         fig.tight_layout()
+    #         fig.savefig(self.save_folder + self.timestr + "_Box_Plot_Group_" + str(i) + "_.pdf")
+    #         fig.savefig(self.save_folder + self.timestr + "_Box_Plot_Group_" + str(i) + "_.png",dpi=600,
+    #                     transparent=False)
+
+    #     plt.close("all")
 
     def create_boxplot_side_by_side(self):
         # iterate over all group numbers
@@ -423,18 +469,31 @@ def create_folder(folderpath: str):
 
 if __name__ == "__main__":
 
-    save_folder_path_global = create_folder("example_data/analysis/comparison/")
+    save_folder_path_global = create_folder("C:/DataAnalysis/AP_3_108/plots/")
     _ = create_folder(save_folder_path_global + "csv/")
 
     Import = csvFiles()
 
     Import.add_entry(
-        folder="example_data/andor_export/",
-        group_number=1, group_name="AP-3-120", color="b", threshold_chisqr=1, upper_limit_fwhm=0.1)
+        folder="C:/DataAnalysis/AP_3_108/22-11-08_AP-3-108_MultipleDots_2Batches/andor_export/",
+        group_number=1, group_name="AP-3-108", color="b", threshold_chisqr=1, upper_limit_fwhm=0.15)
+    Import.add_entry(
+        folder="C:/DataAnalysis/AP_3_108/22-11-11-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
+        group_number=1, group_name="AP-3-108", color="b", threshold_chisqr=1, upper_limit_fwhm=0.15)
+    Import.add_entry(
+        folder="C:/DataAnalysis/AP_3_108/22-11-18-AP-3-108_MultipleSingleDot_Measurement/andor_export/",
+        group_number=1, group_name="AP-3-108", color="b", threshold_chisqr=1, upper_limit_fwhm=0.15)
+    Import.add_entry(
+        folder="C:/DataAnalysis/AP_3_108/22-11-23-AP_3_108/andor_export_2/",
+        group_number=1, group_name="AP-3-108", color="b", threshold_chisqr=1, upper_limit_fwhm=0.15)
 
-    Import.create_boxplot()
-    Import.create_boxplot_side_by_side()
-    Import.create_correlation_plots_side_by_side()
+    Import.create_boxplot(color_by_sample=True)
 
-    Import.average_spectra(coarse_grid=False)
-    Import.export_all_csv()
+
+
+    # Import.create_boxplot()
+    # Import.create_boxplot_side_by_side()
+    # Import.create_correlation_plots_side_by_side()
+
+    # Import.average_spectra(coarse_grid=False)
+    # Import.export_all_csv()
